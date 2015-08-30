@@ -1,0 +1,25 @@
+.hide {display:none}
+.nowrap {white-space:nowrap}
+#title {text-shadow:#ccc 1px 1px 1px}
+
+button, .niceButton {
+	color: white;
+	cursor: pointer;
+	padding: 5px 7px;
+	font-weight: bold;
+	font-family: arial;
+	text-shadow: #000 0px 1px 0px;
+	border-radius: 5px;
+	border: 1px solid #BDBDBD!important;
+	background: -webkit-gradient(linear, left top, left bottom, from(#3DB2FF), to(#4F408B));
+	line-height: 18px;
+	text-decoration:none;
+}
+
+button:hover, .niceButton:hover {
+	color: #fff;
+	background: -webkit-gradient(linear, left top, left bottom, from(#4F408B), to(#3DB2FF));
+}
+
+.yellowBubble {display:none;opacity:1;z-index:1000;margin:4px;border-radius:4px;box-shadow:4px 4px 2px #aaa;padding:7px;border:1px solid #000;background:#FFFFCC;clear:both}
+.centerHover {position:fixed}
