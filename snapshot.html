@@ -1,0 +1,29 @@
+<html>
+<head>
+	<title>Explain and Send Screenshots</title>
+	<script src="js/jquery.min.js" type="text/javascript"></script>
+	<script src="js/jquery-ui-1.8.custom.min.js" type="text/javascript"></script>
+	<script src="js/jquery.Jcrop.js" type="text/javascript"></script>
+	<script src="js/common.js" type="text/javascript"></script>
+	<script src="vendor/mandrill.min.js" type="text/javascript"></script>
+	<script src="js/mandrill.js" type="text/javascript"></script>
+	<script src="js/snapshot.js" type="text/javascript"></script>
+	<link rel="stylesheet" href="css/common.css" type="text/css">
+	<link rel="stylesheet" href="css/jquery-ui-1.8.custom.css" type="text/css">
+	<link rel="stylesheet" href="css/jquery.Jcrop.css" type="text/css">
+</head>
+<style>
+	body {margin:0;font-size:100%}
+</style>
+<body>
+	<div id='SS_ClickAndDragText' style='display:none;border-radius:1px;padding:2px;z-index:5005;background:#FFFFCC;border: 1px solid black;position:absolute;left:-500px;top:-500px' msg="clickAndDrag"></div>
+	<script>
+		//var overlayWidth = ";width:" + document.width + "px;";
+		//document.write("<div id='SS_Overlay' style='position:absolute;top:" + document.body.scrollTop + "px;left:" + document.body.scrollLeft + "px;z-index:5000;" + overlayWidth + ";overflow:hidden'><img id='SS_OverlayImage'/></div>");
+	</script>
+	<div id='SS_Overlay' style='position:absolute;z-index:5000;overflow:hidden;display:none'><img id='SS_OverlayImage'/></div>
+	<div id='SS_Dialog' style='display:none;font-size:12px;text-align:center;padding:20px 0;width:400px;vertical-align:middle'>
+	</div>
+	<canvas id='SS_Canvas' width='350' height='250' style='display:none'>
+</body>
+</html>

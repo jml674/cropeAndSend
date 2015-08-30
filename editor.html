@@ -1,0 +1,216 @@
+<html>
+<head>
+	<title>Explain and Send Screenshots</title>
+	<script src="js/jquery.min.js" type="text/javascript"></script>
+	<script src="js/jquery-ui-1.8.custom.min.js" type="text/javascript"></script>	
+	<script src="js/jquery.textarea-expander.js" type="text/javascript"></script>
+	<script src="js/jpeg_encoder_threaded.js" type="text/javascript"></script>
+	<script src="js/common.js" type="text/javascript"></script>
+	<script src="js/explainAndSendScreenshots.js" type="text/javascript"></script>
+	<script src="js/paint.js" type="text/javascript"></script>
+	<script src="js/minus.js" type="text/javascript"></script>
+	<script src="js/editor.js" type="text/javascript"></script>
+	<link href="css/common.css" rel="stylesheet" type="text/css">
+	<link rel="stylesheet" href="css/jquery-ui-1.8.custom.css" type="text/css">
+	<style>		
+		body {margin:0;padding:0;font-size:100%}
+		th {font-weight:normal}
+		a {color:black}
+		#toolbar {text-align:center;background:#eee;margin:0;padding:12px;border-bottom:1px solid #aaa}
+		#toolbar li {display:inline;cursor:pointer}
+		#toolbar img {margin-top:-5px}
+		canvas, #editedImage, #previewImage {border:2px solid lightblue}
+		#workspace {position:relative}
+		#workspace canvas.line {cursor: url(images/cursors/shapes.gif) 9 9, auto}
+		#workspace canvas.blur {cursor: url(images/cursors/blur.png) 5 5, auto}
+		#workspace canvas.text {cursor:text}
+		#canvastemp {background-color:transparent;display:none;position:absolute;top:0}
+		#text {white-space:nowrap;display:none;position:absolute;background:transparent;color:red;font-size:18px;font-weight:bold;font-family:arial}
+		#text:focus {border:1px dashed gray;outline:none}
+		#processing {display:none;text-align:center}
+		#shareScreenshot {display:none;text-align:center;margin-top:7px}
+		#shareLinks {margin:0;padding:0 0 0 0;list-style-type:none;text-align:left}
+		#shareLinks li {padding:3px 0}
+		#shareLinks a {text-decoration:none}
+		#shareLinks a:hover {text-decoration:underline}
+		#shareLinks img {vertical-align:top;margin:2px 3px 0 0;width:16px;height:16px}
+
+		.actionLetter {color:gray}
+		.actionWord {font-weight:bold;font-size:120%}
+		.col1 {font-weight:normal}
+		.nobr {white-space: nowrap}
+
+		#imageURL, #deleteURL {font-size:13px;padding:3px}
+
+		#colorGrid {display:none;position:absolute;border:2px solid #ddd;border-radius:5px;width:114px;z-index:2}
+		.color {width:17px;line-height:15px;display:block;float:left;border:1px inset gray}
+		#emailLinks {padding-top:4px}
+		#emailLinks a {outline:1px solid transparent;padding:3px 2px 0 2px}
+		#emailLinks a:hover {outline:1px solid gray;background:#efefef}
+
+		#donate {position:absolute;left:20px;top:10px;font-size:15px}
+		#donate a {text-decoration:none;color:black}
+		#donate a:hover {text-decoration:underline}
+
+		#calendarAd {margin-top:10px;background:#eee;border-radius:10px;padding:3px;border:1px solid lightblue}
+		#calendarAd:hover {border:1px solid blue}
+		#calendarAd a {text-decoration:none}		
+		#calendarAd a:hover {text-decoration:underline}
+		
+		.fontSize {text-transform:capitalize;text-decoration:none;font-weight:bold;font-family:sans-serif;padding:4px}
+		.fontSize:hover, .fontSize.selected {box-shadow:3px 3px 5px #666;background:#ccc;border-radius:4px}
+		#fontSmall {font-size:12px}
+		#fontNormal {font-size:18px}
+		#fontLarge {font-size:30px}
+		
+		#uploadWebsites {margin:16px 0;padding:0}
+		#uploadWebsites li {display: inline-block;box-shadow:5px 5px 5px #999;border-radius:5px;border:1px solid #ccc;margin:7px auto;padding:5px;width:100px;text-align:center}
+		#uploadWebsites li:hover {background:#bbb;cursor:pointer}
+		#uploadWebsites img {max-width:100px;max-height:30px}
+		
+		.makeDefault {margin-left:10px}
+		
+		#topHeaderMsg, #bottomFooterMsg {color:gray;font-size:11px}
+		#topHeaderMsg a, #bottomFooterMsg a {color:gray;text-decoration:none;border-bottom:1px dotted gray}
+		#topHeaderMsg a:hover, #bottomFooterMsg a:hover {color:black}
+		
+		.options {margin-top:55px;text-align: center}
+		.option {display:none;box-shadow:5px 5px 5px #999;border-radius:10px;border:1px solid #ccc;background:#fefefe;padding:8px;margin: 20px auto;max-width: 484px}
+		.option > ul {margin:0 0 0 19px;padding:0}
+		.optionHeader {font-weight:bold;padding-bottom:0;margin-bottom:6px;font-size:21px}
+		.optionBody {display:block;margin-left:0px}		
+		
+		#reducedDonationMessage {display:none;border-radius: 10px;background: rgb(255, 255, 165);position: absolute;top: 6px;left: 35%;font-size: 17px;padding: 7px;border: 1px solid #444;}
+		
+	</style>
+
+</head>
+<body>
+	<input id='hiddenURL' type='text' style="position:absolute;left:-500px"/>
+
+	<div id="donate">
+		<a href="#"><img msgSrc="donateButton" align="absmiddle" src="https://www.paypal.com/en_US/i/btn/btn_donate_SM.gif"/> <span msg="supportExtension"></span></a>
+	</div>
+
+	<ul id='toolbar'>
+		<div id="actionButtons" gaCategory="actionButtons">
+			<li id="refresh" style="visibility:hidden;margin-right:20px"><a ga="refresh" href="#" msg="restart">restart</a></li><li id="undo" style="margin-right:20px;visibility:hidden"><a ga="undo" href="#"><img msgTitle='undo' align='absmiddle' src='images/drawing/undo.png'></a></li><li><a ga="cropTool" href="#"><img msgTitle='cropTool' align='absmiddle' src='images/drawing/cropOff.png'></a></li><li><a ga="selectionTool" href="#"><img msgTitle='selectionTool' align='absmiddle' src='images/drawing/selectOff.png'></a></li><li><a ga="drawArrow" href="#"><img class="drawingTool" msgTitle='drawArrow' align='absmiddle' src='images/drawing/arrowOn.png'></a></li><li><a ga="drawCircle" href="#"><img class="drawingTool" msgTitle='drawCircle' align='absmiddle' src='images/drawing/ellipsisOff.png'></a></li><li><a ga="drawRectangle" href="#"><img class="drawingTool" msgTitle='drawRectangle' align='absmiddle' src='images/drawing/rectangleOff.png'></a></li><li><a ga="drawLine" href="#"><img class="drawingTool" msgTitle='drawLine' align='absmiddle' src='images/drawing/lineOff.png'></a></li><li><a ga="freeHand" href="#"><img class="drawingTool" msgTitle='drawFreehand' align='absmiddle' src='images/drawing/drawFreehandOff.png'></a></li><li><a ga="blur" href="#"><img class="drawingTool" msgTitle='blurTool' align='absmiddle' src='images/drawing/blurOff.png'></a></li><li><a ga="writeText" href="#"><img class="drawingTool" msgTitle='writeText' align='absmiddle' src='images/drawing/textOff.png'></a></li>
+			<li style="margin:0 30px 0 10px">
+				<span id="colorPicker" msgTitle="chooseColor" style="background:red;cursor:pointer;height:24px;width:25px;position:absolute;background-repeat: no-repeat;background-image:url(images/drawing/colorPicker.gif); ">&nbsp;</span>
+				<div id="colorGrid"><span class="color" style="background-color: #ffaaaa;">&nbsp;</span><span class="color" style="background-color: #ff5656;">&nbsp;</span><span class="color" style="background-color: #ff0000;">&nbsp;</span><span class="color" style="background-color: #bf0000;">&nbsp;</span><span class="color" style="background-color: #7f0000;">&nbsp;</span><span class="color" style="background-color: #ffffff;">&nbsp;</span><span class="color" style="background-color: #ffd4aa;">&nbsp;</span><span class="color" style="background-color: #ffaa56;">&nbsp;</span><span class="color" style="background-color: #ff7f00;">&nbsp;</span><span class="color" style="background-color: #bf5f00;">&nbsp;</span><span class="color" style="background-color: #7f3f00;">&nbsp;</span><span class="color" e5e5e5ff" style="background-color: #e5e5e5;">&nbsp;</span><span class="color" style="background-color: #ffffaa;">&nbsp;</span><span class="color" style="background-color: #ffff56;">&nbsp;</span><span class="color" style="background-color: #ffff00;">&nbsp;</span><span class="color" style="background-color: #bfbf00;">&nbsp;</span><span class="color" style="background-color: #7f7f00;">&nbsp;</span><span class="color" style="background-color: #cccccc;">&nbsp;</span><span class="color" style="background-color: #d4ffaa;">&nbsp;</span><span class="color" style="background-color: #aaff56;">&nbsp;</span><span class="color" style="background-color: #7fff00;">&nbsp;</span><span class="color" style="background-color: #5fbf00;">&nbsp;</span><span class="color" style="background-color: #3f7f00;">&nbsp;</span><span class="color" style="background-color: #b2b2b2;">&nbsp;</span><span class="color" style="background-color: #aaffaa;">&nbsp;</span><span class="color" style="background-color: #56ff56;">&nbsp;</span><span class="color" style="background-color: #00ff00;">&nbsp;</span><span class="color"  style="background-color: #00bf00;">&nbsp;</span><span class="color" style="background-color: #007f00;">&nbsp;</span><span class="color" style="background-color: #999999;">&nbsp;</span><span class="color" style="background-color: #aaffd4;">&nbsp;</span><span class="color" style="background-color: #56ffaa;">&nbsp;</span><span class="color" style="background-color: #00ff7f;">&nbsp;</span><span class="color" style="background-color: #00bf5f;">&nbsp;</span><span class="color" style="background-color: #007f3f;">&nbsp;</span><span class="color" style="background-color: #7f7f7f;">&nbsp;</span><span class="color" style="background-color: #aaffff;">&nbsp;</span><span class="color" style="background-color: #56ffff;">&nbsp;</span><span class="color" style="background-color: #00ffff;">&nbsp;</span><span class="color" style="background-color: #00bfbf;">&nbsp;</span><span class="color" style="background-color: #007f7f;">&nbsp;</span><span class="color" style="background-color: #666666;">&nbsp;</span><span class="color" style="background-color: #aad4ff;">&nbsp;</span><span class="color" style="background-color: #56aaff;">&nbsp;</span><span class="color" style="background-color: #007fff;">&nbsp;</span><span class="color" style="background-color: #005fbf;">&nbsp;</span><span class="color" style="background-color: #003f7f;">&nbsp;</span><span class="color" style="background-color: #4c4c4c;">&nbsp;</span><span class="color" style="background-color: #aaaaff;">&nbsp;</span><span class="color" style="background-color: #5656ff;">&nbsp;</span><span class="color" style="background-color: #0000ff;">&nbsp;</span><span class="color" style="background-color: #0000bf;">&nbsp;</span><span class="color" style="background-color: #00007f;">&nbsp;</span><span class="color" style="background-color: #333333;">&nbsp;</span><span class="color" style="background-color: #d4aaff;">&nbsp;</span><span class="color" style="background-color: #aa56ff;">&nbsp;</span><span class="color" style="background-color: #7f00ff;">&nbsp;</span><span class="color" style="background-color: #5f00bf;">&nbsp;</span><span class="color" style="background-color: #3f007f;">&nbsp;</span><span class="color" style="background-color: #191919;">&nbsp;</span><span class="color" style="background-color: #ffaaff;">&nbsp;</span><span class="color" style="background-color: #ff56ff;">&nbsp;</span><span class="color" style="background-color: #ff00ff;">&nbsp;</span><span class="color" style="background-color: #bf00bf;">&nbsp;</span><span class="color" style="background-color: #7f007f;">&nbsp;</span><span class="color" style="background-color: #000000;">&nbsp;</span><span class="color" style="background-color: #ffaad4;">&nbsp;</span><span class="color" style="background-color: #ff56aa;">&nbsp;</span><span class="color" style="background-color: #ff007f;">&nbsp;</span><span class="color" style="background-color: #bf005f;">&nbsp;</span><span class="color" style="background-color: #7f003f;">&nbsp;</span><span class="color" style="background-color:#000;">&nbsp;</span></div>
+			</li>
+			<li style='margin-left:20px'><button id="done" msg="done" style="font-weight:bold">Done</button></li>
+		</div>
+		<div style="margin-top:10px;height:40px;text-align:center">
+			<div id="editingInstructions" msg="editingInstructions" style="margin-top:10px;padding-top:10px;font-size:17px;font-weight:bold"></div>
+			<div id="textOptions" class="hide" gaCategory="textOptions" style="font-size:17px;color:gray"><a id="fontSmall" class="fontSize" href="javascript:;" msg="small">Small</a> &nbsp; <a id="fontNormal" class="fontSize selected" href="javascript:;" msg="normal">Normal</a> &nbsp; <a id="fontLarge" class="fontSize" href="javascript:;" msg="large">Large</a></div>
+		</div>
+	</ul>
+	<div style="position:absolute;top:0px;right:1px;font-size:12px;color:gray">
+		<a target="_blank" href="options.html" msg="options">Options</a> &bull; <a href="http://jasonsavard.com/wiki/Explain_and_Send_Screenshots" msg="helpContact">Help - Contact</a>
+	</div>
+	<div id="editor" style='text-align:center'>
+		<div id="workspace">
+			<canvas id="canvas"     width="540" height="320" class="line"></canvas>
+			<canvas id="canvastemp" width="540" height="320"></canvas>
+			<textarea id="text"></textarea>
+		</div>
+
+		<div id="statusbar" style="display:none"><div id="statusbar2">
+			<div id="status"><div>&nbsp;</div></div>
+			<div id="xy"><div>&nbsp;</div></div>
+			<div id="txy"><div>&nbsp;</div></div>
+		</div></div>
+
+		<canvas id="canvassel" width="3000" height="3000" style="display:none;margin-top:470px;border:1px solid green"></canvas>
+		<canvas id="canvasundo" width="540" height="320" style="display:none;border:1px solid red"></canvas>
+
+	</div>
+
+	<div class="options" style="display:none">
+		<button id="download">Download</button>
+		<button id="share">Share</button>
+		<button id="saveImageAs" msg="saveImageAs">Share</button>
+		<button id="copyToClipboard" msg="copyToClipboard">Copy to clipboard</button>
+		<button id="pixlr" msg="advancedEditing">Edit in pixlr</button>
+		<button id="contribute" msg="contribute">Contribute</button>
+		
+		<br><br>
+		
+		<div id="saveImageAsOption" class="option">
+			<div msg="saveImageAsDesc"> <i msg="saveImageAs" class="nobr">Save image as...</i></div>
+			<div style="font-size:13px;color:gray;font-style:italic">(You can also drag & drop the image to your desktop or a folder)</div>
+		</div>
+		<div id="copyToClipboardOption" class="option">
+			<div><span msg="copyToClipboardDesc">Right click image below and choose</span> <i msg="copyImage" class="nobr">Copy image</i></div>
+			<span id="gmailIssue" style="color:red;font-style:italic">
+			<br>
+			Intermittent Gmail issue when pasting image <a id="gmailIssueDetails" href="#" style="color:blue;white-space:nowrap">See solution</a>
+			<div id="alternatives" style="color:black;display:none">
+				<br>
+				<div style="width:100%;white-space:normal">
+					Solution #1: Use <b msg="saveImageAs">Save image as...</b> and then attach that file in your Gmail
+					<br><br>
+					Solution #2: You must share/upload your image to a website below and then proceed with the copy to clipboard instructions. Note: You can also upload the image automatically by selecting default beside the website below
+				</div>
+			</div>
+			</span>
+								
+		</div>
+		<div id="shareOption" class="option" style="margin-bottom:0"><div class="optionHeader nobr"><span msg="shareLinkOn">Share link on</span> <img src="http://static.ak.fbcdn.net/images/connect_favicon.png"> <img src="http://twitter.com/favicon.ico"> <img src="images/icons/gmail.ico"> <span msg="andMore">and more...</span></div>
+			<div class="optionBody">
+				<div id="createLinkWrapper">
+					<span><button id="createLink" href="#" msg="createLink">Create link</button></span> <span>&nbsp;<input id="linkExample" type="text" size=25 value="http://image.com/3c9dh.jpg"/> <span style="color:gray;font-size:10px;text-align:center;margin-top:-2px">(<span msg="example">example</span>)</span></span>
+				</div>
+				<div id="shareWrapper" class="hide">
+					<div id="uploadWebsitesWrapper" style="margin-top:10px">
+						<span msg="chooseAWebsite">Choose a website to upload your image to get a shareable link...</span>
+						<br>
+						<ul id="uploadWebsites" style="list-style-type:none">
+							<div>
+							<li><a class="uploadWebsite" site="imgur" href="#"><img align="absmiddle" src="images/icons/imgur.png"/></a></li> <a site="imgur" class='makeDefault' href="#">Make default</a>
+							</div>
+							
+							<div>					
+							<li><a class="uploadWebsite" site="chemical" href="#"><img align="absmiddle" src="images/icons/chemical.png"/></a></li> <a site="chemical" class='makeDefault' href="#">Make default</a>
+							</div>
+						</ul>
+					</div>
+					<span id="uploadProcessing" class="nobr" style="display:none"><span msg="uploading">Uploading</span>&nbsp;&nbsp;<img id="uploadWasher" style="vertical-align:top" width=16 src="images/loading.gif"/></span>
+					<div style="text-align:left">
+						<span id="uploadProcessingDone" class="nobr" style="display:none" msg="readyToShare"></span>
+					</div>
+					<ul id="shareLinks" class="hide" gaCategory="share">
+						<li><input id='imageURL' type='text' size='38' spellcheck="false"></li>
+						<li id="deleteURLWrapper" style="display:none;margin-top:10px"><span msg="deleteLink">Delete link</span>:<br><input id='deleteURL' type='text' size='38' spellcheck="false"></li>
+						<li style="margin:10px 0" msg="clickToShare">Or click one of these to share quickly...</li>
+						<!--li id="copyToClipboard" style="margin-bottom:20px"><a href="#"><img src="images/clipboard.png"/><span msg="copyLink"></span></a></li-->
+						<li><a href="#" id="fb"><img src="http://static.ak.fbcdn.net/images/connect_favicon.png">Facebook</a></li>
+						<li><a href="#" id="twitter"><img src="http://twitter.com/favicon.ico">Twitter</a></li>
+						<li><a href="#" id="gmail"><img src="images/icons/gmail.ico">Gmail</a></li>
+					</ul>
+				</div>
+				<br>
+				<a id="removeDefault" style="text-align:center;color:blue;text-decoration:underline" href="#">Remove default</a>						
+			</div>
+		</div>
+	</div>
+
+	<div id="shareScreenshot">
+		<div id="error" style="color:red;font-weight:bold;font-size:14px"></div>
+		<br>
+		<div id="reducedDonationMessage">Long time user special... get the <a target="_blank" href="donate.html">extra features</a> for only 50&cent;</div>
+		<div id="editedImageWrapper" style="position:relative;max-width:66%;margin:0 auto">
+			<div style="display:inline-block;position:relative">
+				<span id="topHeaderMsg" style="margin-top:0px;float:left"><a href="#" msg="removeHeader">Remove header text?</a> &rarr;&nbsp;</span>
+				<img id="editedImage" msgTitle="rightClickImage" style="float:left;max-width:80%" src=""/>
+				<br>
+				<span id="bottomFooterMsg" style="position:absolute;left:0;bottom:8px"><a href="#" msg="removeFooter">Remove footer text?</a> &rarr;&nbsp;</span>
+			</div>
+		</div>
+	</div>
+
+	<div id="processing"><span msg="processing"></span>&nbsp;&nbsp;<img src="images/ajaxLoader.gif"/><br/><div style="padding:10px 0;font-size:12px;color:gray"><div id="hurried" class="hide"><span msg="hurried"></span><br/><span msg="pastingProblem"></span></div></div>
+	<img id="previewImage" style="max-width:400px;max-height:300px" msgTitle="rightClickImage" alt="Image loading..."/></div>
+</body>
+</html>

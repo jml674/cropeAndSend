@@ -1,0 +1,46 @@
+{
+"update_url": "https://clients2.google.com/service/update2/crx",
+
+  "name": "cropeAndSend",
+  "description": "__MSG_description__",
+  "version": "1.0.0",
+  "background": {
+    "scripts": ["js/common.js", "js/explainAndSendScreenshots.js", "js/background.js"],
+	"persistent": false
+  },
+  "commands": {
+	  "grab_selected_area": {
+	    "description": "__MSG_grabSelectedArea__"
+	  },
+	  "grab_visible_page": {
+	    "description": "__MSG_grabVisiblePart__"
+	  },
+	  "grab_entire_page": {
+	    "description": "__MSG_grabEntirePage__"
+	  }
+   },
+  "browser_action": {
+      "default_icon": "images/icon19.png",
+      "default_title": "__MSG_name__",
+      "default_popup": "popup.html"
+  },
+  "options_page": "options.html",
+   "icons": {
+      "16": "images/icon19.png",
+      "19": "images/icon19.png",
+      "32": "images/icon32.png",
+      "48": "images/icon48.png",
+      "128": "images/icon128.png"
+   },
+  "default_locale": "en",
+  "incognito": "split",
+  "permissions": [ "storage", "activeTab", "contextMenus" ],
+  "storage": {
+	  "managed_schema": "schema.json"
+  },
+  "optional_permissions": [ "http://imm.io/*", "http://files.chemicalservers.com/*", "clipboardRead" ],
+
+  "manifest_version": 2,
+  "content_security_policy": "script-src 'self' https://www.google-analytics.com/analytics.js https://www.google.com https://checkout.stripe.com https://www.paypalobjects.com https://apps.jasonsavard.com; object-src 'self'",
+  "web_accessible_resources": ["donate.html"]
+}

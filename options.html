@@ -1,0 +1,46 @@
+<html>
+<head>
+	<title>Explain and Send Screenshots - Options</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+	<style>
+		body {font-size:100%}
+		#donate {text-align:center;font-size:17px;border-radius:15px;margin:30px auto;padding:15px;background:#f1f1f1;width:540px}
+		#donate a {text-decoration:none}
+		#donate a:hover {text-decoration:underline}
+	</style>
+	<script type="text/javascript" src="js/jquery.min.js"></script> 
+	<script type="text/javascript" src="js/common.js"></script>
+	<script type="text/javascript" src="js/explainAndSendScreenshots.js"></script>
+	<script type="text/javascript" src="js/options.js"></script>
+</head>
+<body>
+
+<div style="text-align:center;margin-top:40px">
+	<div style="font-size:28px">
+		<img src="images/icon48.png" align="absmiddle"> <span class="title">Explain and Send Screenshots</span>
+	</div>
+	<br><br>
+	<div style="text-align:center">
+		<fieldset style="margin:0 auto;padding:30px;width:490px;text-align:left;border-radius:10px">
+		<legend style="font-weight:bold;text-align:left">Options</legend>
+			<input id="headerFooter" type="checkbox" pref="removeHeaderFooter" mustDonate="true"/> <label for="headerFooter" msg="removeHeaderFooter">Remove header and footer text on image</label>
+			<br>
+			<input type="checkbox" id="removeDonationLink" pref="removeDonationLink" mustDonate="true"> <label for='removeDonationLink' msg="removeDonationLink" msgToolTip="removeDonationLinkTitle">Remove donation link</label></td></tr>
+			<br>
+			<input type="checkbox" id="removeMenuItems" pref="removeMenuItems"> <label for='removeMenuItems' msg="removeMenuItems">removeMenuItems</label></td></tr>
+			<br-->
+			<div id="hostOnlineWarning" style="color:red;display:none">
+				Pasting directly into some applications may not work when this feature is enabled.<br>You might have to use: Edit > Paste Special > As Bitmap
+			</div>
+		</fieldset>
+	</div>
+	<div>
+		<br>
+		<div id="donate">
+			<a href="#">Support this extension by donating and get your requests prioritized<br><img align="absmiddle" src="https://www.paypal.com/en_US/i/btn/btn_donate_SM.gif"></a> 
+		</div>
+	</div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,97 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link href="css/common.css" rel="stylesheet" type="text/css">
+<style type="text/css">
+	.hide {display:none}
+	body {margin:4px;font-family:  arial, "Trebuchet MS", "Lucida Grande", Verdana, sans-serif; font-size: 12px;color:black}
+	a {color:#000000;text-decoration:none}
+	a:hover {text-decoration:underline}
+	.menuitem {height:20px;line-height:20px;xxxborder-radius:4px;padding: 2px 4px;white-space:nowrap;vertical-align:middle}
+	.menuitem:hover {cursor:pointer;background:lightblue}
+	.menuitem img {height:16px;vertical-align:top;margin:2px 5px 0 0}
+	.disabled {opacity:0.3}
+	.disabled:hover {cursor:none;background:none}
+	#error {display:none;padding:4px;border-radius:5px;border:1px solid #eee;margin:5px;background:#FFFFCC}
+	#urlWasCopied {display:none;width:400px;border-radius:5px;margin:5px;border:1px solid #eee;padding:5px;background:#FFFFCC}
+	.sep {background:#eee;height:1px;margin:3px 0}
+	#entireScreenInstructions {display:none}
+	.instructions {display:none;width:220px;margin:4px 1px;border-radius:4px;border:1px solid #eee;padding:4px;background:#FFFFCC}
+</style>
+
+	<link rel="import" href="imports.html" async>
+
+</head>
+
+<body id="body">
+	<div id="justInstalled" class="hide" msg="justInstalled">
+		You probably just installed this extension or an update has been done, so you'll need to <a id="reloadTab" style='text-decoration:underline' href='#' msg="justInstalled2">reload</a> this tab first or grab the <a id="justInstalledGrabVisibleArea" style='text-decoration:underline' href='#' msg="justInstalled3">visible part of page</a> instead!
+	</div>
+	<div id="multipleMonitors" class="hide" style="margin-top:10px">
+		If using multiple monitors try unplugging the 2nd one temporarily.
+	</div>
+	<div id="cannotCaptureWarning" class="yellowBubble centerHover">
+		<span msg="particularPages">These <a id="particularPages" msg="particularPages2" href="javascript:;" style="color:blue;text-decoration:underline">particular pages</a> cannot be captured due to Chrome's security policy, please try another page!</span>
+		<div id="particularPagesList" class="hide nowrap" style="font-size:11px;margin-top:5px;color:black">&bull; <span msg="pagesThatStartWith">Pages that start with</span> <b>chrome://</b><br>&bull; <span msg="pagesFromOtherExtensions">Pages from other extensions</span></div>
+	</div>
+
+	<div id="processing" style="text-align:center;z-level:999;opacity:0.95;display:none;width:120px;margin:32px 0;padding:0;font-size:120%;font-weight:bold"><span msg="capturing"></span>&nbsp;&nbsp;<img src="images/ajaxLoader.gif" align="absmiddle"/></div>
+
+	<div id="error"></div>
+	
+	<div id="urlWasCopied">
+		You must right click on the image and choose <b>Copy image</b> (NOT the URL) and then choose 'Open from clipboard'<br><br>Try again by first opening the image <a id="imageFromUrl" href="#" style="font-weight:bold" target="_blank">here</a>
+	</div>
+	
+	
+	<div id="grabLinks">
+		<div id="selectedArea" class='menuitem'><img src="images/select.png"><span msg="grabSelectedArea"></span></div>
+		<div id="visibleArea" class='menuitem'><img src="images/visible.png"><span msg="grabVisiblePart"></span></div>
+		<div id="entirePage" class='menuitem'><img height=16 src="images/entirePage.png"><span msg="grabEntirePage"></span></div>
+		<div id="grabWindow" class='menuitem'><img height=16 src="images/grabWindow.png"><span msg="grabWindow"></span></div>
+		<div id="entireScreen" class='menuitem'><img height=16 src="images/entireScreen.png"><span msg="grabEntireScreen"></span></div>
+		<div id="entireScreenWindowsInstructions" class="instructions">
+			Press <b>PrtScr</b> on your keyboard.
+			<br>
+			Then use <b>Open from clipboard</b> below.
+		</div>
+		<div id="grabWindowInstructions" class="instructions">
+			Make sure your browser or window is visible first and press <b>Alt+PrtScr</b> on your keyboard.
+			<br><br>
+			Then use <b>Open from clipboard</b> below.
+		</div>
+		<div id="entireScreenMacInstructions" class="instructions">
+			Press <b>Control-Command (⌘)-Shift-3</b> on your keyboard.
+			<br>
+			Then use <b>Open from clipboard</b> below.
+		</div>
+		<div id="grabWindowMacInstructions" class="instructions">
+			Press <b>Control-Command (⌘)-Shift-4</b> on your keyboard.
+			<br><br>
+			Select an area or hit <b>Spacebar</b> to select a window.
+			<br><br>
+			Then use <b>Open from clipboard</b> below.
+		</div>
+		<div id="entireScreenCrOSInstructions" class="instructions">
+			Press <b>Ctrl + <img src="images/chromeos_page_flipper.png" style="width: 39px;vertical-align: middle;"/></b> on your keyboard.
+			<br><br>
+			Then use <b>Open from clipboard</b> below.
+		</div>
+		<div id="grabWindowCrOSInstructions" class="instructions">
+			Press <b>Ctrl + Shift + <img src="images/chromeos_page_flipper.png" style="width: 39px;vertical-align: middle;"/></b> on your keyboard.
+			<br><br>
+			Then use <b>Open from clipboard</b> below.
+		</div>
+		<div class="sep">&nbsp;</div>
+		<div id="openFile" class='menuitem'><div style="display:inline-block;width:21px">&nbsp;</div><span msg="openFile">openfile</span></div>
+		<div id="openFromClipboard" class='menuitem'><div style="display:inline-block;width:21px">&nbsp;</div><span msg="openFromClipboard">openFromClipboard</span></div>
+		<div class="sep">&nbsp;</div>
+		<div id="contribute" class="menuitem"><div style="display:inline-block;width:21px">&nbsp;</div><span>Contribute</span></div>
+		<div id="otherExtensions" class="menuitem"><div style="display:inline-block;width:21px">&nbsp;</div><span>Discover my apps</span></div>
+		<div id="options" class="menuitem"><div style="display:inline-block;width:21px">&nbsp;</div><span>Options</span></div>
+		<div id="feedback" class="menuitem"><div style="display:inline-block;width:21px">&nbsp;</div><span>Feedback</span></div>
+		<div id="aboutMe" class="menuitem"><div style="display:inline-block;width:21px">&nbsp;</div><span>About me</span></div>
+		<div id="Help" class="menuitem"><div style="display:inline-block;width:21px">&nbsp;</div><span>Help</span></div>
+	</div>
+</body>
+</html>
