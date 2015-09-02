@@ -13,7 +13,7 @@
 	"justInstalled2": {"message": "reload"},
 	"justInstalled3": {"message": "visible part of page"},
 
-	"clickAndDrag": {"message": "Click and drag/ Right button to close"},
+	"clickAndDrag": {"message": "Click and drag"},
 
 	"supportExtension": {"message": " to support this extension"},
 	"done": {"message": "Done"},

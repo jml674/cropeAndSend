@@ -5,7 +5,8 @@
   "description": "__MSG_description__",
   "version": "1.0.0",
   "background": {
-    "scripts": ["js/common.js", "js/explainAndSendScreenshots.js", "js/background.js"],
+    //"scripts": ["js/common.js", "js/explainAndSendScreenshots.js", "js/background.js"],
+    "scripts": ["js/common.js", "js/background.js"],
 	"persistent": false
   },
   "commands": {
@@ -21,7 +22,7 @@
    },
   "browser_action": {
       "default_icon": "images/icon19.png",
-      "default_title": "__MSG_name__",
+      "default_title": "cropeAndSend",
       "default_popup": "popup.html"
   },
   "options_page": "options.html",
@@ -34,7 +35,7 @@
    },
   "default_locale": "en",
   "incognito": "split",
-  "permissions": [ "storage", "activeTab", "contextMenus" ],
+  "permissions": [ "storage", "activeTab", "contextMenus","*://*/*" ],
   "storage": {
 	  "managed_schema": "schema.json"
   },

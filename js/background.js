@@ -85,5 +85,5 @@ chrome.contextMenus.onClicked.addListener(function(info, tab) {
 });
 
 if (chrome.runtime.setUninstallURL) {
-	chrome.runtime.setUninstallURL("");
+//	chrome.runtime.setUninstallURL("");
 }

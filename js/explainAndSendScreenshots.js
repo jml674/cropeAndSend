@@ -2,6 +2,11 @@ var canvas = "";
 var ctx;
 var cy = 0;
 var SCROLLBAR_WIDTH = 22;
+var screenShotTab = null;
+var screenShotData = null;
+var scrolledX=-1;
+var scrolledY = -1;
+						
 
 function captureRecursively(tab, callback) {
 	console.log("captrecur")
@@ -41,16 +46,26 @@ function captureToCanvas(callback) {
 	});
 }
 
+var tabInjected=[];
+
 function captureVisibleTab(urlToGoAfter) {
 	return new Promise(function(resolve, reject) {
 		chrome.tabs.captureVisibleTab(null, {format:"png"}, function(data) {
 			if (data) {
 				chrome.runtime.getBackgroundPage(function(bg) {
 					getActiveTab(function(tab) {
-						bg.screenShotTab = tab;
-						bg.screenShotData = data;
-						chrome.tabs.create({url: urlToGoAfter});
-						resolve();
+						screenShotTab = tab;
+						screenShotData = data;
+
+						//chrome.tabs.create({url: urlToGoAfter});
+						//resolve();
+						if (tabInjected[tab]){
+							resolve();
+						}
+						else{
+								tabInjected[tab]=true;
+								return injectScripts();
+						}
 					});
 				});
 			} else {
@@ -60,8 +75,26 @@ function captureVisibleTab(urlToGoAfter) {
 	});
 }
 
+function injectScripts(){
+	return new Promise(function(resolve, reject) {
+
+		chrome.tabs.query({ active: true, windowId: chrome.windows.WINDOW_ID_CURRENT },function(tabs){
+		  var id = tabs[0].id;
+			var array_css=["css/common.css","css/jquery-ui-1.8.custom.css","css/jquery.Jcrop.css"];
+			  Utils.executeCssFromFile(id,array_css);
+				var array_scripts=["js/jquery.min.js","js/jquery-ui-1.8.custom.min.js",
+							"js/jquery.Jcrop.js","js/common.js" ,"vendor/mandrill.min.js",
+							"js/snapshot.js"
+					];
+			  Utils.executeScriptFromFile(id,array_scripts);
+				resolve();
+		});
+	});
+}
+
 function grabSelectedArea() {
 	localStorage.grabMethod = "selectedArea";
+	console.log("entering grabSelectedArea ...");
 	return captureVisibleTab("snapshot.html");
 }
 
@@ -158,3 +191,15 @@ function initContextMenu() {
 		}
 	});
 }
+
+chrome.runtime.onMessage.addListener(
+  function(request, sender, sendResponse) {
+    console.log(sender.tab ?
+                "from a content script:" + sender.tab.url :
+                "from the extension");
+    if (request.action == "tabReady"){
+     	sendResponse({screenShotTab: screenShotTab , screenShotData:screenShotData, clickAndDragLabel: chrome.i18n.getMessage("clickAndDrag")});
+		}
+	}
+);
+

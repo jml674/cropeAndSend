@@ -2,6 +2,10 @@
 .nowrap {white-space:nowrap}
 #title {text-shadow:#ccc 1px 1px 1px}
 
+.bodyNoScroll::-webkit-scrollbar { 
+	width: 0 !important
+}
+
 button, .niceButton {
 	color: white;
 	cursor: pointer;
